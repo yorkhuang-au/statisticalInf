@@ -1,0 +1,65 @@
+---
+title: "Analyze ToothGrowth Dataset"
+author: "York Huang"
+date: "Sunday, March 13, 2016"
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 4
+---
+## Overview
+In the project, we're going to analyze the ToothGrowth data in the R datasets package
+
+## Prepare Data
+Load data from R ToothGrowth package and convert to data frame.
+```{r}
+library(ggplot2)
+
+data(ToothGrowth)
+tg <- data.frame(ToothGrowth)
+```
+
+## Exploration Data
+There are 60 observations. 
+```{r}
+dim(tg)
+head(tg)
+```
+Summary of data (tg) -
+```{r}
+summary(tg)
+```
+Plot tooth length vs supplement.
+```{r}
+ggplot(data=tg, aes(x=supp, y=len)) + geom_boxplot(aes(fill=supp))
+```
+Plot tooth length vs dose.
+```{r}
+ggplot(data=tg, aes(x=dose, y=len)) + geom_boxplot(aes(fill=factor(dose)))
+```
+
+## Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose
+
+Compare between supplements.
+```{r}
+t.test(tg$len[tg$supp=="OJ"], tg$len[tg$supp=="VC"], paired = FALSE, var.equal = FALSE)$conf
+```
+The 95 percent confidence interval ( -0.1710156,  7.5710156) include 0. We are not conficent to compare the impacts between OJ and VC supplements.
+
+Compare between dose 0.5 and 1.
+```{r}
+t.test(tg$len[tg$dose==0.5], tg$len[tg$dose==1], paired = FALSE, var.equal = FALSE)$conf
+```
+The 95 percent confidence interval ( -11.983781,  -6.276219) does NOT include 0. We are conficent to say it is helpful to tooth length when increasing does from 0.5 to 1.
+
+Compare between dose 1 and 2.
+```{r}
+t.test(tg$len[tg$dose==1], tg$len[tg$dose==2], paired = FALSE, var.equal = FALSE)$conf
+```
+The 95 percent confidence interval ( -8.996481, -3.733519) does NOT include 0. We are conficent to say it is helpful to tooth length when increasing does from 1 to 2.
+
+## State your conclusions and the assumptions needed for your conclusions
+We can summarize the following.
+* We can't find the impact of supplements on tooth length.
+* Increasing dose is helpful to tooth length.
+We also note that the observation size is still small. More data may help us better understand the impacts.
